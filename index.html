@@ -1938,8 +1938,11 @@
                         <input class="form-input" type="date" id="modalTglTerimaPart" onchange="editHitungJumlahHari()" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span class="editable-label"><i class="fas fa-pen edit-icon"></i> Jumlah (hari)</span></label>
-                        <input class="form-input" type="number" id="modalJumlah" readonly style="background:var(--bg-card);cursor:default;font-weight:700;color:var(--accent);" />
+                        <label class="form-label"><span class="editable-label"><i class="fas fa-pen edit-icon"></i> Jumlah</span></label>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <input class="form-input" type="number" id="modalJumlah" readonly style="background:var(--bg-card);cursor:default;font-weight:700;color:var(--accent);flex:1;" />
+                            <span style="color:var(--text-secondary);font-weight:600;font-size:0.85rem;">hari</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label"><span class="editable-label"><i class="fas fa-pen edit-icon"></i> Order ke Pabrik</span></label>
@@ -2685,6 +2688,9 @@
                     k = o['Keterangan Pemenuhan'] || '',
                     da = 'onclick="openEditModal(\'' + o._docId + '\')"';
 
+                // Format jumlah dengan satuan "hari"
+                var jmlDisplay = jml ? escapeHtml(jml) + ' hari' : '-';
+
                 h += '<tr class="' + (isNew ? 'new-row' : '') + '">' +
                     '<td>' + (i + 1) + '</td>' +
                     '<td><span class="status-badge ' + sc + '"><span class="status-dot"></span>' + escapeHtml(s) +
@@ -2705,7 +2711,7 @@
                     '<td class="editable-cell" ondblclick="editTglTerimaPart(\'' + o._docId +
                     '\', this)" title="Double‑klik untuk edit (Admin only)" style="cursor:text;">' +
                     formatDateDisplay(ttp) + '</td>' +
-                    '<td style="font-weight:700;color:var(--accent);">' + escapeHtml(jml || '-') + '</td>' +
+                    '<td style="font-weight:700;color:var(--accent);">' + jmlDisplay + '</td>' +
                     '<td class="editable-cell" ondblclick="editOrderPabrik(\'' + o._docId +
                     '\', this)" title="Double‑klik untuk edit (Admin only)" style="cursor:text;">' +
                     escapeHtml(op || '-') + '</td>' +
@@ -2768,6 +2774,8 @@
                     op = o['ORDER KE PABRIK'] || '',
                     k = o['Keterangan Pemenuhan'] || '';
 
+                var jmlDisplay = jml ? escapeHtml(jml) + ' hari' : '-';
+
                 h += '<tr>' +
                     '<td>' + (i + 1) + '</td>' +
                     '<td><span class="status-badge finish"><span class="status-dot"></span>FINISH</span></td>' +
@@ -2791,7 +2799,7 @@
                         '') +
                     ' style="' + (canEdit ? 'cursor:text;' : '') + '">' +
                     formatDateDisplay(ttp) + '</td>' +
-                    '<td style="font-weight:700;color:var(--info);">' + escapeHtml(jml || '-') + '</td>' +
+                    '<td style="font-weight:700;color:var(--info);">' + jmlDisplay + '</td>' +
                     '<td class="' + cellClass + '" ' +
                     (canEdit ? 'ondblclick="editOrderPabrik(\'' + o._docId + '\', this)" title="Double‑klik untuk edit (Admin only)"' :
                         '') +
@@ -2996,13 +3004,15 @@
                     'Tgl Order', 'TGL TERIMA PART', 'Jumlah', 'Order ke Pabrik', 'Keterangan'
                 ];
                 var rows = fd.map(function(o, i) {
+                    // Jumlah di excel tetap angka tanpa satuan agar mudah diolah
+                    var jml = o['JUMLAH'] || '';
                     return [i + 1, o['STATUS'] || '', o['TEKNISI'] || '', formatDateDisplay(o['TGL PENGAJUAN ORD'] ||
                             ''),
                         o['NO. SERVICE CASE'] || '', o['TYPE (IDNO)'] || '', o['NO. SERIE'] || '', o['NO GUDANG'] ||
                         '',
                         o['NAMA PART'] || '', o['QTY'] || '', o['PROD.'] || '', o['LAYANAN'] || '',
                         o['NAMA KONSUMEN'] || '', o['NO. HP'] || '', formatDateDisplay(o['Tgl Order'] || ''),
-                        formatDateDisplay(o['TGL TERIMA PART'] || ''), o['JUMLAH'] || '',
+                        formatDateDisplay(o['TGL TERIMA PART'] || ''), jml,
                         o['ORDER KE PABRIK'] || '', o['Keterangan Pemenuhan'] || ''
                     ];
                 });
